@@ -1,0 +1,100 @@
+allprojects {
+    apply plugin: 'idea'
+    apply plugin: 'java'
+    apply plugin: 'checkstyle'
+    apply plugin: 'jacoco'
+
+    sourceCompatibility =1.8
+    targetCompatibility =1.8
+
+    jacoco {
+        toolVersion = '0.7.5.201505241946'
+    }
+
+    ext.coverageExclusions = [ ]
+
+    repositories {
+
+            mavenCentral()
+       
+        // maven {
+        //     url "http://10.40.250.118/artifactory/repo"
+        //     credentials {
+        //         username "srv_rr1_cd"
+        //         password "{DESede}QICmPRBtyAIivNprd00qaA=="
+        //     }
+        // }
+    }
+
+    checkstyleMain {
+        ignoreFailures = false
+        //configFile = file("${rootProject}/config/checkstyle/checkstyle.xml")
+        configFile = new File("" + "${rootDir}/config/checkstyle/", "checkstyle.xml")
+        reports {
+            include ( '**/*.java')
+            xml {
+                destination "${buildDir}/reports/checkstyle/main.xml"
+            }
+        }
+    }
+
+    checkstyleTest {
+        ignoreFailures = false
+        //configFile = file("${rootProject}/config/checkstyle/checkstyle.xml")
+        configFile = new File("" + "${rootDir}/config/checkstyle/", "checkstyle-test.xml")
+        reports {
+            include ( '**/*.java')
+            xml {
+                destination "${buildDir}/reports/checkstyle/test.xml"
+            }
+        }
+    }
+
+    task checkstyleReport << {
+        if (file("$buildDir/reports/checkstyle/main.xml").exists()) {
+            ant.xslt(in: checkstyleMain.reports.xml.destination,
+                    style: file("${rootDir}/config/checkstyle/checkstyle-noframes-sorted.xsl"),
+                    out: new File(checkstyleMain.reports.xml.destination.parent, 'main.html'))
+        }
+    }
+
+    task checkstyleTestReport << {
+        if (file("$buildDir/reports/checkstyle/test.xml").exists()) {
+            ant.xslt(in: checkstyleTest.reports.xml.destination,
+                    style: file("${rootDir}/config/checkstyle/checkstyle-noframes-sorted.xsl"),
+                    out: new File(checkstyleTest.reports.xml.destination.parent, 'main.html'))
+        }
+    }
+
+    gradle.taskGraph.afterTask {Task task, TaskState state ->
+        if(state.failure) {
+            if (task.name in ['checkstyleMain']) {
+                checkstyleReport.execute()
+            }
+            if (task.name in ['checkstyleTest']) {
+                checkstyleTestReport.execute()
+            }
+        }
+    }
+
+    jacocoTestReport {
+        doFirst {
+            classDirectories = fileTree(dir: "${buildDir}/classes/main/").exclude(coverageExclusions)
+        }
+        reports {
+            html.enabled = true
+            html.destination "${buildDir}/jacocoHtml"
+        }
+    }
+
+    test {
+        jacoco {
+            destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+        }
+    }
+}
+
+
+// task wrapper(type: Wrapper) {
+//     gradleVersion = "4.1"
+// }

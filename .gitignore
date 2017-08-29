@@ -1,0 +1,8 @@
+/.gradle/
+/.project
+/.classpath
+/.settings/
+**/bin
+**/.DS_Store
+**/gradle*.zip
+

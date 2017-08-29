@@ -1,0 +1,116 @@
+buildscript {
+    repositories {
+        
+            mavenCentral()
+        
+        // maven {
+        //     credentials {
+        //         username "srv-cd-efc"
+        //         password "AP5BgN3XHg76ijv1bdEsTm3iw7R"
+        //     }
+        //     url "https://artifactory.aus.thenational.com/repo"
+        // }
+        // maven {
+        //     url "http://10.40.250.118/artifactory/repo"
+        //     credentials {
+        //         username "srv_rr1_cd"
+        //         password "{DESede}QICmPRBtyAIivNprd00qaA=="
+        //     }
+        // }
+
+    }
+    ext {
+       springBootVersion = "1.5.6.RELEASE"
+       // springBootVersion = '1.2.6.RELEASE'
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'spring-boot'
+//apply plugin: 'jetty'
+
+war {
+    baseName = 'sample-app'
+    version =  '0.0.1-SNAPSHOT'
+}
+
+// tag::boot[]
+bootRepackage {
+    enabled = true
+    mainClass = 'com.example.main.Application'
+}
+
+
+ext.deps = [
+        servletApiRunVersion:'3.0.1',
+        dozerVersion:'5.5.1'
+]
+// TEST config for dependancy resolve
+/*configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group == 'org.springframework') {
+            details.useVersion '4.1.6.RELEASE'
+        }
+    }
+}*/
+
+dependencies {
+    compile ('org.springframework.boot:spring-boot-starter-web') {
+       // exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+    }
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+    providedCompile('javax.servlet:javax.servlet-api:3.0.1')
+    providedRuntime("org.springframework.boot:spring-boot-starter-jetty:1.1.0.RELEASE"){
+        exclude group: 'org.eclipse.jetty.websocket'
+    }
+   // providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+
+    compile 'org.aspectj:aspectjweaver:1.8.4'
+    compile 'net.sf.dozer:dozer:'+ deps.dozerVersion
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.4.6"
+    compile "org.yaml:snakeyaml:1.14"
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile "com.jayway.jsonpath:json-path:2.0.0"
+    testCompile "com.jayway.jsonpath:json-path-assert:2.0.0"
+    testCompile "com.jayway.restassured:rest-assured:2.4.1"
+    testCompile "com.jayway.restassured:json-schema-validator:2.4.1"
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java/'
+        }
+        resources {
+            srcDir 'src/main/java/resources'
+        }
+    }
+    integrationTest {
+        java.srcDir file('src/integration-test/java/')
+        resources.srcDir file('src/integration-test/resources/')
+        compileClasspath = sourceSets.main.output + configurations.testRuntime
+        runtimeClasspath = output + compileClasspath
+    }
+}
+
+
+task integrationTest(type: Test) {
+    description = 'Runs the integration tests.'
+    group = 'verification'
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+
+    binResultsDir = file("$testResultsDir/integration")
+    jacoco {
+        excludes = coverageExclusions
+        destinationFile = file("$buildDir/jacoco/jacocoIntegTest.exec")
+    }
+    checkstyle {
+        configFile = new File("" + "${rootDir}/config/checkstyle/", "checkstyle-test.xml")
+
+    }
+}
