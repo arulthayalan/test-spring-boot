@@ -12,3 +12,9 @@
 *.ipr
 **/*.iml
 **/*.ipr
+/sample-app/sample-app.iml
+spring-boot-app.iml
+
+*.iml
+*.ipr
+*.iws
