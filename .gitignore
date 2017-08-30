@@ -5,4 +5,11 @@
 **/bin
 **/.DS_Store
 **/gradle*.zip
+**/.idea/
+**/out/
+**/build/
+*.iml
+*.ipr
+**/*.iml
+**/*.ipr
 
