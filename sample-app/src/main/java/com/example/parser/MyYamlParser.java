@@ -26,14 +26,14 @@ public class MyYamlParser {
         constructor.addTypeDescription(carDescription);
 
         Yaml yaml = new Yaml();
-       // ListOperation car = (ListOperation) yaml.load(yamlStr);
-     //  ListOperation car = (ListOperation) yaml.loadAs(yamlStr, ListOperation.class);
+        // ListOperation car = (ListOperation) yaml.load(yamlStr);
+        //  ListOperation car = (ListOperation) yaml.loadAs(yamlStr, ListOperation.class);
 
         ListOperation operations = (ListOperation) yaml.loadAs(new ClassPathResource("/ListOperation.yaml").getInputStream(), ListOperation.class);
 
-        for (ParserModel model:operations.getModels()) {
-           // System.out.println(model.getName());
-        }
+//        for (ParserModel model : operations.getModels()) {
+//            System.out.println(model.getName());
+//        }
         return operations;
     }
 

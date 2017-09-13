@@ -28,9 +28,19 @@ buildscript {
     }
 }
 
+configurations {
+    provided
+    integrationCompile.extendsFrom testCompile
+    integrationRuntime.extendsFrom testRuntime
+}
+sourceSets.main.compileClasspath += configurations.provided
+sourceSets.test.compileClasspath += configurations.provided
+sourceSets.test.runtimeClasspath += configurations.provided
+
 apply plugin: 'java'
 apply plugin: 'war'
-apply plugin: 'spring-boot'
+apply plugin: 'org.springframework.boot'
+
 //apply plugin: 'jetty'
 
 war {
@@ -62,6 +72,8 @@ dependencies {
     compile ('org.springframework.boot:spring-boot-starter-web') {
        // exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
     }
+    compile("org.springframework.boot:spring-boot-devtools")
+
     compile("org.springframework.boot:spring-boot-starter-actuator")
     providedCompile('javax.servlet:javax.servlet-api:3.0.1')
     providedRuntime("org.springframework.boot:spring-boot-starter-jetty:1.1.0.RELEASE"){
@@ -81,19 +93,11 @@ dependencies {
 }
 
 sourceSets {
-    main {
-        java {
-            srcDir 'src/main/java/'
-        }
-        resources {
-            srcDir 'src/main/java/resources'
-        }
-    }
-    integrationTest {
-        java.srcDir file('src/integration-test/java/')
-        resources.srcDir file('src/integration-test/resources/')
-        compileClasspath = sourceSets.main.output + configurations.testRuntime
-        runtimeClasspath = output + compileClasspath
+    integration {
+        java.srcDir file('src/integration/java')
+        resources.srcDir file('src/integration/resources')
+        compileClasspath += sourceSets.main.output + sourceSets.test.output
+        runtimeClasspath += sourceSets.main.output + sourceSets.test.output
     }
 }
 
@@ -101,8 +105,8 @@ sourceSets {
 task integrationTest(type: Test) {
     description = 'Runs the integration tests.'
     group = 'verification'
-    testClassesDir = sourceSets.integrationTest.output.classesDir
-    classpath = sourceSets.integrationTest.runtimeClasspath
+    testClassesDirs = sourceSets.integration.output.classesDirs
+    classpath = sourceSets.integration.runtimeClasspath
 
     binResultsDir = file("$testResultsDir/integration")
     jacoco {
@@ -110,7 +114,6 @@ task integrationTest(type: Test) {
         destinationFile = file("$buildDir/jacoco/jacocoIntegTest.exec")
     }
     checkstyle {
-        configFile = new File("" + "${rootDir}/config/checkstyle/", "checkstyle-test.xml")
-
+        configFile = file( "${rootDir}/config/checkstyle/checkstyle.xml")
     }
 }

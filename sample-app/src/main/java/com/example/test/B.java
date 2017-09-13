@@ -5,7 +5,7 @@ package com.example.test;
  */
 public class B extends  A {
 
-    public void a() {
+    public void aB() {
         //System.out.println("I'm B.a()");
     }
 }

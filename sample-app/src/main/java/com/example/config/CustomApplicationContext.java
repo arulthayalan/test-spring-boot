@@ -23,7 +23,7 @@ public class CustomApplicationContext extends WebMvcConfigurerAdapter {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomApplicationContext.class);
 
-    /** Custome Message converter with object mapper filter **/
+    /** Custome Message converter with object mapper filter. **/
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {

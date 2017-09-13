@@ -5,7 +5,7 @@ package com.example.test;
  */
 public class A {
 
-    public void a() {
+    public void aA() {
         //System.out.println("I'm A.a()");
     }
 }
