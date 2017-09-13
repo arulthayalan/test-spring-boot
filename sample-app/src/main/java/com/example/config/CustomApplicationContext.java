@@ -1,6 +1,7 @@
 package com.example.config;
 
 import com.example.custom.JsonPropertyFilter;
+import com.example.support.HTMLCharacterEscapes;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -23,14 +24,14 @@ public class CustomApplicationContext extends WebMvcConfigurerAdapter {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomApplicationContext.class);
 
-    /** Custome Message converter with object mapper filter. **/
+    /**
+     * Custome Message converter with object mapper filter.
+     **/
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         super.configureMessageConverters(converters);
         boolean flag = false;
-        LOG.debug("coverter added....");
-
 
         for (HttpMessageConverter<?> converter : converters) {
             if (converter instanceof MappingJackson2HttpMessageConverter) {
@@ -48,6 +49,10 @@ public class CustomApplicationContext extends WebMvcConfigurerAdapter {
 
     }
 
+    @Bean
+    public HTMLCharacterEscapes htmlCharacterEscapes() {
+        return new HTMLCharacterEscapes();
+    }
 
     @Bean(name = "objectMapper")
     public ObjectMapper getObjectMapper() {
@@ -60,8 +65,12 @@ public class CustomApplicationContext extends WebMvcConfigurerAdapter {
 
         mapperBuilder.filters(filters);
 
+
         ObjectMapper mapper = mapperBuilder.build();
+        mapper.getFactory().setCharacterEscapes(htmlCharacterEscapes());
+
         mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+
 
         return mapper;
     }

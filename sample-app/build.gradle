@@ -85,6 +85,8 @@ dependencies {
     compile 'net.sf.dozer:dozer:'+ deps.dozerVersion
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.4.6"
     compile "org.yaml:snakeyaml:1.14"
+
+    compile "org.jsoup:jsoup:1.10.3"
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile "com.jayway.jsonpath:json-path:2.0.0"
     testCompile "com.jayway.jsonpath:json-path-assert:2.0.0"
