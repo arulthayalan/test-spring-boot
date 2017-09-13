@@ -12,9 +12,18 @@
 *.ipr
 **/*.iml
 **/*.ipr
+**/*/.classpath
 /sample-app/sample-app.iml
 spring-boot-app.iml
 
+*.iml
+*.ipr
+*.iws
+sample-app/.classpath
+sample-app/.project
+sample-app/.settings/org.eclipse.buildship.core.prefs
+*.prefs
+*.iml
 *.iml
 *.ipr
 *.iws
