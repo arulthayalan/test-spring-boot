@@ -16,14 +16,6 @@ allprojects {
     repositories {
 
             mavenCentral()
-       
-        // maven {
-        //     url "http://10.40.250.118/artifactory/repo"
-        //     credentials {
-        //         username "srv_rr1_cd"
-        //         password "{DESede}QICmPRBtyAIivNprd00qaA=="
-        //     }
-        // }
     }
 
 //    checkstyleMain {

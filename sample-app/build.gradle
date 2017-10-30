@@ -2,22 +2,6 @@ buildscript {
     repositories {
         
             mavenCentral()
-        
-        // maven {
-        //     credentials {
-        //         username "srv-cd-efc"
-        //         password "AP5BgN3XHg76ijv1bdEsTm3iw7R"
-        //     }
-        //     url "https://artifactory.aus.thenational.com/repo"
-        // }
-        // maven {
-        //     url "http://10.40.250.118/artifactory/repo"
-        //     credentials {
-        //         username "srv_rr1_cd"
-        //         password "{DESede}QICmPRBtyAIivNprd00qaA=="
-        //     }
-        // }
-
     }
     ext {
        springBootVersion = "1.5.6.RELEASE"
